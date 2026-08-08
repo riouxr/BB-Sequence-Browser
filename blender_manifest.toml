@@ -1,7 +1,7 @@
 schema_version = "1.4.0"
 
 id      = "bb_sequence_browser"
-version = "1.0.0"
+version = "1.2.0"
 name    = "BB Sequence Browser"
 tagline = "List image sequences as collapsed frame ranges in the File Browser, Nuke-style"
 

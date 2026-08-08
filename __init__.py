@@ -6,7 +6,7 @@
 bl_info = {
     "name":        "BB Sequence Browser",
     "author":      "Blender Bob + Claude.ai",
-    "version":     (1, 1, 0),
+    "version":     (1, 2, 0),
     "blender":     (4, 2, 0),
     "location":    "File Browser › Sequences",
     "description": "List image sequences as collapsed ranges, Nuke-style",
@@ -163,6 +163,11 @@ def iter_file_browsers():
             space = area.spaces.active
             if space.params and getattr(space, "browse_mode", 'FILES') == 'FILES':
                 yield area, space
+
+
+def addon_prefs():
+    entry = bpy.context.preferences.addons.get(__package__ or __name__)
+    return entry.preferences if entry else None
 
 
 def window_of(area):
@@ -379,6 +384,36 @@ def _watch_for_load():
     return 0.25
 
 
+# ── keep the import dialog's Options sidebar open ────────────────────────────
+
+# Blender rebuilds the temp file-select window from defaults every time, so
+# show_region_tool_props is always False on open and there is nothing to
+# persist. Force it once per dialog — once only, so closing it by hand sticks.
+_options_opened = set()
+
+
+def _ensure_options_visible():
+    prefs = addon_prefs()
+    if prefs is not None and not prefs.auto_open_options:
+        return
+
+    live = set()
+    for area, space in iter_file_browsers():
+        if space.active_operator is None:
+            continue
+        key = space.as_pointer()
+        live.add(key)
+        if key in _options_opened:
+            continue
+        _options_opened.add(key)
+        if not space.show_region_tool_props:
+            space.show_region_tool_props = True
+            area.tag_redraw()
+
+    # Forget dialogs that have closed, so the next one is handled afresh.
+    _options_opened.intersection_update(live)
+
+
 # ── auto-refresh timer ───────────────────────────────────────────────────────
 
 TIMER_INTERVAL = 0.5
@@ -389,6 +424,8 @@ def _poll_directory():
         wm = bpy.context.window_manager
     except AttributeError:
         return TIMER_INTERVAL
+
+    _ensure_options_visible()
 
     if not getattr(wm, "bb_seq", None) or not wm.bb_seq.auto_refresh:
         return TIMER_INTERVAL
@@ -656,9 +693,17 @@ class BBSEQ_Preferences(bpy.types.AddonPreferences):
         default=False,
         update=_sidebar_changed,
     )
+    auto_open_options: BoolProperty(
+        name="Open the Options Sidebar in Import Dialogs",
+        description=("Blender resets an import dialog's Options sidebar to closed every "
+                     "time it opens, which hides the sequence list. Force it open. "
+                     "Closing it by hand still works — it is only forced once per dialog"),
+        default=True,
+    )
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, "auto_open_options")
         layout.prop(self, "show_sidebar_panel")
         layout.label(text="The list is always available from the Sequences button "
                           "in the File Browser header, and from the sidebar of any "

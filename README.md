@@ -52,6 +52,17 @@ detail box below the list gives the exact missing-frame count.
 
 ## Preferences
 
+**Open the Options Sidebar in Import Dialogs** (on by default). Blender rebuilds
+the temp file-select window from defaults every time it opens, so an import
+dialog's Options sidebar is always closed and there is nothing for Blender to
+persist — you would have to open it by hand on every import to see the list.
+This forces it open.
+
+It is forced *once per dialog*, so closing it by hand still sticks for that
+dialog. The one gap: closing a dialog and reopening one inside the same 0.5s
+timer tick is seen as the same dialog, because Blender reuses the freed space's
+memory address. Not reachable at human speed.
+
 **Also Show in Left Sidebar** adds an always-visible copy of the list to the
 File Browser's left sidebar. It lands *below* the Bookmarks / System / Volumes
 / Recent panels — collapse those once and Blender remembers the layout. Off by

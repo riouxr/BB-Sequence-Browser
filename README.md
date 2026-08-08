@@ -127,8 +127,27 @@ scoped to the import dialog.
 
 ## Install
 
-Blender 4.2+. Install the folder as an extension, or zip it and use
-*Edit ▸ Preferences ▸ Add-ons ▸ Install from Disk*.
+Blender 4.2 or newer. Developed and tested on Blender 5.1.
+
+1. Download the zip from the [latest release](https://github.com/riouxr/BB-Sequence-Browser/releases/latest).
+2. *Edit ▸ Preferences ▸ Add-ons ▸ Install from Disk*, pick the zip.
+
+The zip is a Blender extension — `blender_manifest.toml` and `__init__.py` sit
+at its root. To work from a clone instead, point Blender at the repo folder.
+
+## Changelog
+
+**1.2.0** — Force the Options sidebar open in import dialogs; Blender rebuilds
+that window from defaults every time, so the list was hidden behind a manual
+click on every import. Fixes `blender_manifest.toml` being left at `1.0.0`,
+which made Blender report the wrong version for the installed extension.
+
+**1.1.0** — Clicking a row loads the whole sequence, with the repair pass for
+when the selection does not survive to execute. Dropped the collapse toggle
+(the native grid is already the expanded view), Copy Pattern, and the separate
+Select All Frames button.
+
+**1.0.0** — Initial release.
 
 ## Notes
 

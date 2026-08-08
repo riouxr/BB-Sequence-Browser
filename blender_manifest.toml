@@ -1,0 +1,18 @@
+schema_version = "1.4.0"
+
+id      = "bb_sequence_browser"
+version = "1.0.0"
+name    = "BB Sequence Browser"
+tagline = "List image sequences as collapsed frame ranges in the File Browser, Nuke-style"
+
+maintainer = "BB"
+type       = "add-on"
+
+blender_version_min = "4.2.0"
+
+license  = ["SPDX:GPL-2.0-or-later"]
+category = "Import-Export"
+
+[permissions]
+# No special permissions required — directory listing goes through the standard
+# library and all scene access is via the Blender Python API.
